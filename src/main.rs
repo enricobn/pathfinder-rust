@@ -1,5 +1,6 @@
 extern crate ggez;
 mod node;
+mod pathfinder;
 
 use ggez::*;
 use ggez::graphics::{DrawMode, Point2};
