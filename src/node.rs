@@ -81,9 +81,9 @@ impl PathField {
 
     pub fn occupied(&self, point: Point, from: Point) -> bool {
         let near = point.distance(from) < 3;
-        for fieldShape in self.shapes.iter() {
-            if fieldShape.contains(point) {
-                if !fieldShape.is_moving() || near {
+        for field_shape in self.shapes.iter() {
+            if field_shape.contains(point) {
+                if !field_shape.is_moving() || near {
                     return true;
                 }
             }
