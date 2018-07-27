@@ -19,27 +19,38 @@ impl AStarPathFinder {
 
 }
 
-pub struct Node {
-    point : Point,
-    parent: Box<Node>,
-    from : Point,
-    to : Point
+pub struct Node<'a> {
+    point : &'a Point,
+    parent: Option<Box<Node<'a>>>,
+    from : &'a Point,
+    to : &'a Point
 }
 
-impl Node {
+impl <'a> Node<'a> {
     pub fn f(&self) -> i32 {
         return self.g() + self.h();
     }
         
-    pub fn g(&self) -> i32{
-        return self.g_(&self.parent);
-    }
+    pub fn g(&self) -> i32 {
+        if self.parent.is_none() {
+            return 0;
+        }
 
-    pub fn h(&self) -> i32 {
-        return ((self.to.x - self.point.x).abs() + (self.to.y - self.point.y).abs()) * 10;
-    }
+        match self.parent {
+            Some(ref node) => {
+                let mut g = node.g();
+                if self.point.x == node.point.x || self.point.y == node.point.y {
+                    g += 10;
+                } else {
+                    g += 14;
+                }
+                return g;        
+            },
+            None => 0
+        }
 
-    fn g_(&self, node : &Node) -> i32 {
+        /*let node = (self.parent).unwrap();
+
         let mut g = node.g();
         if self.point.x == node.point.x || self.point.y == node.point.y {
             g += 10;
@@ -47,5 +58,11 @@ impl Node {
             g += 14;
         }
         return g;
+        */
     }
+
+    pub fn h(&self) -> i32 {
+        return ((self.to.x - self.point.x).abs() + (self.to.y - self.point.y).abs()) * 10;
+    }
+
 }
