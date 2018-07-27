@@ -79,8 +79,16 @@ pub struct PathField {
 
 impl PathField {
 
-    pub fn occupied(&self, point: Point, from: Point) -> bool {
-        let near = point.distance(from) < 3;
+    pub fn occupied_from(&self, point: Point, from: Point) -> bool {
+        return self.occupied_(point, point.distance(from) < 3);
+    }
+
+    // TODO 
+    pub fn occupied(&self, point: Point) -> bool {
+        return self.occupied_(point, true);
+    }
+
+    pub fn occupied_(&self, point: Point, near: bool) -> bool {
         for field_shape in self.shapes.iter() {
             if field_shape.contains(point) {
                 if !field_shape.is_moving() || near {
@@ -89,6 +97,10 @@ impl PathField {
             }
         }
         return false;
+    }
+
+    pub fn contains(&self, point: Point) -> bool {
+        return self.rectangle.contains(point);
     }
 
 }
