@@ -76,6 +76,7 @@ impl FieldShape for PointFieldShape {
 
 }
 
+#[derive(Copy, Clone)]
 pub struct RectangleFieldShape {
     pub point : Point,
     pub width : i32,
