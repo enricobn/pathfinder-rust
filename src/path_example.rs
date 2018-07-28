@@ -42,7 +42,7 @@ impl MainState {
 
     fn add_shape(shapes : &mut Vec<Box<FieldShape>>, shapes_cp : &mut Vec<Box<RectangleFieldShape>>, shape: RectangleFieldShape) {
         shapes.push(Box::new(shape));
-        shapes_cp.push(Box::new(shape.clone()));
+        shapes_cp.push(Box::new(shape));
     }
 }
 

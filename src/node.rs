@@ -1,5 +1,4 @@
 use std::fmt;
-use std::num;
 
 #[derive(Copy, Clone, Hash, Eq, PartialEq)]
 pub struct Point {pub x: i32, pub y:i32}
@@ -10,15 +9,15 @@ impl Point {
         return Point {x: x, y:y};
     }
 
-    fn mv(&self, x_diff: i32, y_diff: i32) -> Point {
+    pub fn mv(&self, x_diff: i32, y_diff: i32) -> Point {
         return Point {x: self.x + x_diff, y: self.y + y_diff};
     }
 
-    fn distance(&self, point: Point) -> i32 {
+    pub fn distance(&self, point: Point) -> i32 {
         return (((self.x - point.x) ^ 2 + (self.y - point.y) ^ 2) as f64).sqrt() as i32;
     }
 
-    fn angle(&self, point: Point) -> f32 {
+    pub fn angle(&self, point: Point) -> f32 {
         let dx = point.x - self.x;
         let dy = point.y - self.y;
         // - since 0,0 is up left
@@ -90,12 +89,11 @@ impl RectangleFieldShape {
         return RectangleFieldShape {point: Point::new(x, y), width: width, height: height, moving: moving};
     }
     
-    fn getMaxX(&self) -> i32 {
+    fn get_max_x(&self) -> i32 {
         return self.point.x + self.width -1;
     }
 
-
-    fn getMaxY(&self) -> i32 {
+    fn get_max_y(&self) -> i32 {
         return self.point.y + self.height -1;
     }
 }
@@ -111,8 +109,8 @@ impl FieldShape for RectangleFieldShape {
     }
     
     fn contains(&self, point: Point) -> bool {
-        return point.x >= self.point.x && point.x <= self.getMaxX()
-                && point.y >= self.point.y && point.y <= self.getMaxY();
+        return point.x >= self.point.x && point.x <= self.get_max_x()
+                && point.y >= self.point.y && point.y <= self.get_max_y();
     }
     
     fn mv(&self, x_diff: i32, y_diff: i32) -> Self where Self: Sized {
