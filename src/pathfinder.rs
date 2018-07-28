@@ -20,6 +20,7 @@ impl AStarPathFinder {
 
         // was null in the java code
         let mut target_node = initial_node.clone();
+
         open.insert(self.from, initial_node);
 
         loop {
@@ -42,49 +43,48 @@ impl AStarPathFinder {
                 Some(m_node) => {
                     if m_node.point.eq(&self.to) {
                         target_node = (m_node).clone();
+                        break;
+                    }
 
+                    let m_point = m_node.point;
 
-                        let m_point = m_node.point;
+                    let array: [Point; 8] = [
+                        Point { x: m_point.x +1, y: m_point.y },
+                        Point { x: m_point.x +1, y: m_point.y + 1 },
+                        Point { x: m_point.x , y: m_point.y + 1 },
+                        Point { x: m_point.x -1, y: m_point.y +1 },
+                        Point { x: m_point.x -1, y: m_point.y },
+                        Point { x: m_point.x -1, y: m_point.y -1 },
+                        Point { x: m_point.x , y: m_point.y -1 },
+                        Point { x: m_point.x +1, y: m_point.y -1 }
+                    ];
 
-                        let array: [Point; 8] = [
-                            Point { x: m_point.x +1, y: m_point.y },
-                            Point { x: m_point.x +1, y: m_point.y + 1 },
-                            Point { x: m_point.x , y: m_point.y + 1 },
-                            Point { x: m_point.x -1, y: m_point.y +1 },
-                            Point { x: m_point.x -1, y: m_point.y },
-                            Point { x: m_point.x -1, y: m_point.y -1 },
-                            Point { x: m_point.x , y: m_point.y -1 },
-                            Point { x: m_point.x +1, y: m_point.y -1 }
-                        ];
+                    for i in 0..7 {
+                        let point = array[i];
 
-                        for i in 0..7 {
-                            let point = array[i];
-
-                            // I do not consider the end point to be occupied, so I can move towards it
-                            if self.field.contains(point) && (point.eq(&self.to) || !self.field.occupied_from(point, self.from)) {
-                                if !closed.contains_key(&point) {
-                                    let mut node = Node {point : point.to_owned(), parent: None, from: &self.from, to: &self.to};
-                                    node.set_parent((m_node).clone());
-                                    if !open.contains_key(&point) {
-                                        open.insert(point, node);
-                                    } else {
-                                        let got = open.get(&point);
-                                        let mut got_some = got.unwrap().clone();
-                                        let gToMin = m_node.g_of(&got_some);
-                                        if gToMin < node.g() {
-                                            got_some.set_parent((m_node).clone());
-                                        }
+                        // I do not consider the end point to be occupied, so I can move towards it
+                        if self.field.contains(point) && (point.eq(&self.to) || !self.field.occupied_from(point, self.from)) {
+                            if !closed.contains_key(&point) {
+                                let mut node = Node {point : point.to_owned(), parent: None, from: &self.from, to: &self.to};
+                                node.set_parent((m_node).clone());
+                                if !open.contains_key(&point) {
+                                    open.insert(point, node);
+                                } else {
+                                    let got = open.get(&point);
+                                    let mut got_some = got.unwrap().clone();
+                                    let gToMin = m_node.g_of(&got_some);
+                                    if gToMin < node.g() {
+                                        got_some.set_parent((m_node).clone());
                                     }
                                 }
                             }
                         }
-                            
-                        closed.insert(m_node.point, (m_node).clone());
-                        
-                        open.remove(m_node.point.borrow());
-
-                        break;
                     }
+                        
+                    closed.insert(m_node.point, (m_node).clone());
+                    
+                    open.remove(&m_node.point);
+
                 },
                 None => {
                     println!("Cannot find min node");

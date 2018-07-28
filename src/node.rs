@@ -71,6 +71,50 @@ impl FieldShape for PointFieldShape {
 
 }
 
+pub struct RectangleFieldShape {
+    pub point : Point,
+    pub width : i32,
+    pub height : i32,
+    pub moving : bool
+}
+
+impl RectangleFieldShape {
+    
+    fn getMaxX(&self) -> i32 {
+        return self.point.x + self.width -1;
+    }
+
+
+    fn getMaxY(&self) -> i32 {
+        return self.point.y + self.height -1;
+    }
+}
+
+impl FieldShape for RectangleFieldShape {
+
+    fn location(&self) -> Point {
+        return self.point;
+    }
+    
+    fn set_location(&self, location: Point) -> Self where Self: Sized {
+        return RectangleFieldShape {point: location, .. *self };
+    }
+    
+    fn contains(&self, point: Point) -> bool {
+        return point.x >= self.point.x && point.x <= self.getMaxX()
+                && point.y >= self.point.y && point.y <= self.getMaxY();
+    }
+    
+    fn mv(&self, x_diff: i32, y_diff: i32) -> Self where Self: Sized {
+        return self.set_location(Point {x: self.point.x + x_diff, y: self.point.y + y_diff});
+    }
+    
+    fn is_moving(&self) -> bool {
+        return self.moving;
+    }
+
+}
+
 pub struct PathField {
     shapes: Vec<Box<FieldShape>>,
     size: Dimension,
@@ -78,6 +122,10 @@ pub struct PathField {
 }
 
 impl PathField {
+
+    pub fn new(shapes: Vec<Box<FieldShape>>, size: Dimension) -> Self {
+        return PathField {shapes: shapes, rectangle : Rectangle {point : Point {x:0, y:0}, width: size.width, height : size.height}, size: size};
+    }
 
     pub fn occupied_from(&self, point: Point, from: Point) -> bool {
         return self.occupied_(point, point.distance(from) < 3);
@@ -131,6 +179,6 @@ impl Rectangle {
 }
 
 pub struct Dimension {
-    width: i32,
-    height: i32
+    pub width: i32,
+    pub height: i32
 }
