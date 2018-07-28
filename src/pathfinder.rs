@@ -14,15 +14,15 @@ impl AStarPathFinder {
     pub fn get_path(&self) -> Vec<Point> {
         let initial_node = Node {point : self.from, parent: None, from: &self.from, to: &self.to};
 
-        let mut mNode : Node;
-        let mut minNode : Option<Node>;
+        let mut m_node : Node;
+        let mut min_node : Option<Node>;
 
         let mut open   : HashMap<Point,Node> = HashMap::new();
         let mut closed : HashMap<Point,Node> = HashMap::new();
 
         // was null in the java code
-        let mut targetNode = initial_node.to_owned();
-        open.insert(self.from, initial_node.to_owned());
+        let mut target_node = initial_node;
+        open.insert(self.from, initial_node);
 
         while true {
             if open.is_empty() {
@@ -30,20 +30,20 @@ impl AStarPathFinder {
             }
 
             let mut min = i32::max_value();
-            minNode = None;
+            min_node = None;
         
             for node in open.values() {
                 let f = node.f();
-                if minNode.is_none() || f < min {
+                if min_node.is_none() || f < min {
                     min = f;
-                    minNode = Some(*node);
+                    min_node = Some(*node);
                 }
             }
   
-            match minNode {
-                Some(mNode) => {
-                    if mNode.point.eq(&self.to) {
-                        targetNode = mNode;
+            match min_node {
+                Some(m_node) => {
+                    if m_node.point.eq(&self.to) {
+                        target_node = m_node;
                         break;
                     }
                 },
@@ -53,18 +53,18 @@ impl AStarPathFinder {
                 }
             }
 
-            mNode = minNode.unwrap();
-            let mPoint = mNode.point;
+            m_node = min_node.unwrap();
+            let m_point = m_node.point;
 
             let array: [Point; 8] = [
-                Point { x: mPoint.x +1, y: mPoint.y },
-                Point { x: mPoint.x +1, y: mPoint.y + 1 },
-                Point { x: mPoint.x , y: mPoint.y + 1 },
-                Point { x: mPoint.x -1, y: mPoint.y +1 },
-                Point { x: mPoint.x -1, y: mPoint.y },
-                Point { x: mPoint.x -1, y: mPoint.y -1 },
-                Point { x: mPoint.x , y: mPoint.y -1 },
-                Point { x: mPoint.x +1, y: mPoint.y -1 }
+                Point { x: m_point.x +1, y: m_point.y },
+                Point { x: m_point.x +1, y: m_point.y + 1 },
+                Point { x: m_point.x , y: m_point.y + 1 },
+                Point { x: m_point.x -1, y: m_point.y +1 },
+                Point { x: m_point.x -1, y: m_point.y },
+                Point { x: m_point.x -1, y: m_point.y -1 },
+                Point { x: m_point.x , y: m_point.y -1 },
+                Point { x: m_point.x +1, y: m_point.y -1 }
             ];
 
             for i in 0..7 {
@@ -74,36 +74,36 @@ impl AStarPathFinder {
                 if self.field.contains(point) && (point.eq(&self.to) || !self.field.occupied_from(point, self.from)) {
                     if !closed.contains_key(&point) {
                         let mut node = Node {point : point.to_owned(), parent: None, from: &self.from, to: &self.to};
-                        node.set_parent(mNode);
+                        node.set_parent(m_node);
                         if !open.contains_key(&point) {
-                            open.insert(point, node.to_owned());
+                            open.insert(point, node);
                         } else {
                             let got = open.get(&point);
                             let mut got_some = *got.unwrap();
-                            let gToMin = mNode.g_of(&got_some);
+                            let gToMin = m_node.g_of(&got_some);
                             if gToMin < node.g() {
-                                got_some.set_parent(mNode);
+                                got_some.set_parent(m_node);
                             }
                         }
                     }
                 }
             }
                 
-            closed.insert(mNode.point, mNode);
+            closed.insert(m_node.point, m_node);
             
-            open.remove(mNode.point.borrow());
+            open.remove(m_node.point.borrow());
             
         }
 
         let mut result : Vec<Point> = Vec::new();
 
-        while targetNode.parent.is_some() {
+        while target_node.parent.is_some() {
             // the path can contains occupied points. Normally it can be only the end point 
-            if !self.field.occupied(targetNode.point) {
-                result.push(targetNode.point);
+            if !self.field.occupied(target_node.point) {
+                result.push(target_node.point);
             }
 
-            targetNode = *targetNode.parent.unwrap();
+            target_node = *target_node.parent.unwrap();
         }
         return result;
     }
@@ -126,7 +126,7 @@ impl <'a> Node<'a> {
     pub fn g(&self) -> i32 {
         match self.parent {
             Some(node) => {
-                return self.g_of(node);
+                return self.g_of(&node);
             },
             None => 0
         }
@@ -147,7 +147,7 @@ impl <'a> Node<'a> {
     }
 
     pub fn set_parent(&mut self, node: Node<'a>) {
-        self.parent = Some(&node.to_owned());
+        self.parent = Some(&node);
     }
 
 }
