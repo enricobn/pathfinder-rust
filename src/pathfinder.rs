@@ -1,25 +1,28 @@
 use std::collections::HashMap;
+use std::borrow::Borrow;
 
 use node::*;
 
-pub struct AStarPathFinder<'a> {
+pub struct AStarPathFinder {
     pub field: PathField,
-    pub from: &'a Point,
-    pub to: &'a Point
+    pub from: Point,
+    pub to: Point
 }
 
-impl <'a> AStarPathFinder<'a> {
+impl AStarPathFinder {
 
-    pub fn get_path(&'a self) -> Vec<Point> {
+    pub fn get_path(&self) -> Vec<Point> {
+        let initial_node = Node {point : self.from, parent: None, from: &self.from, to: &self.to};
+
+        let mut mNode : Node;
+        let mut minNode : Option<Node>;
+
+        let mut open   : HashMap<Point,Node> = HashMap::new();
+        let mut closed : HashMap<Point,Node> = HashMap::new();
+
         // was null in the java code
-
-        let initial_node = Node {point : &self.from, parent: None, from: &self.from, to: &self.to};
-        let mut targetNode = &initial_node;
-
-        let mut open   : HashMap<&'a Point,&Node<'a>> = HashMap::new();
-        let mut closed : HashMap<&'a Point,&Node<'a>> = HashMap::new();
-
-        open.insert(self.from, &initial_node);
+        let mut targetNode = initial_node.to_owned();
+        open.insert(self.from, initial_node.to_owned());
 
         while true {
             if open.is_empty() {
@@ -27,13 +30,13 @@ impl <'a> AStarPathFinder<'a> {
             }
 
             let mut min = i32::max_value();
-            let mut minNode : Option<&Node<'a>> = None;
+            minNode = None;
         
             for node in open.values() {
                 let f = node.f();
                 if minNode.is_none() || f < min {
                     min = f;
-                    minNode = Some(node);
+                    minNode = Some(*node);
                 }
             }
   
@@ -50,7 +53,7 @@ impl <'a> AStarPathFinder<'a> {
                 }
             }
 
-            let mNode = minNode.unwrap();
+            mNode = minNode.unwrap();
             let mPoint = mNode.point;
 
             let array: [Point; 8] = [
@@ -64,18 +67,20 @@ impl <'a> AStarPathFinder<'a> {
                 Point { x: mPoint.x +1, y: mPoint.y -1 }
             ];
 
-/*
-            for point in array.iter() {
+            for i in 0..7 {
+                let point = array[i];
+
                 // I do not consider the end point to be occupied, so I can move towards it
-                if self.field.contains(*point) && (point.eq(&self.to) || !self.field.occupied_from(*point, *self.from)) {
-                    if !closed.contains_key(point) {
-                        let node = Node {point : point, parent: Some(mNode), from: &self.from, to: &self.to};
-                        let mut got = open.get(point);
-                        if got.is_none() {
-                            open.insert(point, &node);
+                if self.field.contains(point) && (point.eq(&self.to) || !self.field.occupied_from(point, self.from)) {
+                    if !closed.contains_key(&point) {
+                        let mut node = Node {point : point.to_owned(), parent: None, from: &self.from, to: &self.to};
+                        node.set_parent(mNode);
+                        if !open.contains_key(&point) {
+                            open.insert(point, node.to_owned());
                         } else {
+                            let got = open.get(&point);
                             let mut got_some = *got.unwrap();
-                            let gToMin = mNode.g_of(got_some);
+                            let gToMin = mNode.g_of(&got_some);
                             if gToMin < node.g() {
                                 got_some.set_parent(mNode);
                             }
@@ -83,11 +88,10 @@ impl <'a> AStarPathFinder<'a> {
                     }
                 }
             }
-            */
                 
             closed.insert(mNode.point, mNode);
             
-            open.remove(mNode.point);
+            open.remove(mNode.point.borrow());
             
         }
 
@@ -95,19 +99,20 @@ impl <'a> AStarPathFinder<'a> {
 
         while targetNode.parent.is_some() {
             // the path can contains occupied points. Normally it can be only the end point 
-            if !self.field.occupied(*targetNode.point) {
-                result.push(*targetNode.point);
+            if !self.field.occupied(targetNode.point) {
+                result.push(targetNode.point);
             }
 
-            targetNode = targetNode.parent.unwrap();
+            targetNode = *targetNode.parent.unwrap();
         }
-        return Vec::new();
+        return result;
     }
 
 }
 
+#[derive(Copy, Clone)]
 pub struct Node<'a> {
-    point : &'a Point,
+    point : Point,
     parent: Option<&'a Node<'a>>,
     from : &'a Point,
     to : &'a Point
@@ -141,8 +146,8 @@ impl <'a> Node<'a> {
         return ((self.to.x - self.point.x).abs() + (self.to.y - self.point.y).abs()) * 10;
     }
 
-    pub fn set_parent(&mut self, node: &'a Node<'a>) {
-        self.parent = Some(node);
+    pub fn set_parent(&mut self, node: Node<'a>) {
+        self.parent = Some(&node.to_owned());
     }
 
 }
