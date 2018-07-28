@@ -5,6 +5,11 @@ use std::num;
 pub struct Point {pub x: i32, pub y:i32}
 
 impl Point {
+
+    pub fn new(x: i32, y: i32) -> Point {
+        return Point {x: x, y:y};
+    }
+
     fn mv(&self, x_diff: i32, y_diff: i32) -> Point {
         return Point {x: self.x + x_diff, y: self.y + y_diff};
     }
@@ -79,6 +84,10 @@ pub struct RectangleFieldShape {
 }
 
 impl RectangleFieldShape {
+
+    pub fn new(x: i32, y: i32, width: i32, height: i32, moving: bool) -> RectangleFieldShape {
+        return RectangleFieldShape {point: Point::new(x, y), width: width, height: height, moving: moving};
+    }
     
     fn getMaxX(&self) -> i32 {
         return self.point.x + self.width -1;

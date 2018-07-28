@@ -1,55 +1,41 @@
 extern crate ggez;
 mod node;
 mod pathfinder;
+mod circle_example;
 
 use ggez::*;
 use ggez::graphics::{DrawMode, Point2};
 use node::*;
 use pathfinder::*;
 
-struct MainState {
-    pos_x: f32,
-}
-
-impl MainState {
-    fn new(_ctx: &mut Context) -> GameResult<MainState> {
-        let s = MainState { pos_x: 0.0 };
-        Ok(s)
-    }
-}
-
-impl event::EventHandler for MainState {
-    fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
-        self.pos_x = self.pos_x % 800.0 + 1.0;
-        Ok(())
-    }
-
-    fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        graphics::clear(ctx);
-        graphics::circle(ctx,
-                         DrawMode::Fill,
-                         Point2::new(self.pos_x, 380.0),
-                         100.0,
-                         2.0)?;
-        graphics::present(ctx);
-        Ok(())
-    }
-}
-
 pub fn main() {
     test_path_field();
     
-    /*
     let c = conf::Conf::new();
     let ctx = &mut Context::load_from_conf("super_simple", "ggez", c).unwrap();
-    let state = &mut MainState::new(ctx).unwrap();
+    let state = &mut circle_example::MainState::new(ctx).unwrap();
     event::run(ctx, state).unwrap();
-    */
+    
+}
+
+static SIZE_COEFF : i32 = 5;
+
+fn display() {
+    let dim = Dimension {width: 100, height: 100};
+    let mut shapes : Vec<Box<FieldShape>> = Vec::new();
+
+    shapes.push(Box::new(RectangleFieldShape::new(10, 10, 10, 10, false)));
+    shapes.push(Box::new(RectangleFieldShape {point: Point::new(20, 20), width:10, height:10, moving: false} ));
+    shapes.push(Box::new(RectangleFieldShape {point: Point::new(40, 20), width:20, height:20, moving: false} ));
+    shapes.push(Box::new(RectangleFieldShape {point: Point::new(40, 60), width:20, height:20, moving: false} ));
+    shapes.push(Box::new(RectangleFieldShape {point: Point::new(75, 75), width:10, height:10, moving: false} ));
+
+    let field = PathField::new(shapes, dim);
+
 }
 
 fn test_path_field() {
     let dim = Dimension {width: 100, height: 100};
-
     let mut shapes : Vec<Box<FieldShape>> = Vec::new();
 
     shapes.push(Box::new(RectangleFieldShape {point: Point {x:0, y:0}, width:10, height:10, moving: false}));
