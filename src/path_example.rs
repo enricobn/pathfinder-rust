@@ -1,9 +1,9 @@
 use ggez::*;
-use ggez::graphics::{DrawMode,Point2,Rect};
+use ggez::graphics::{DrawMode,Point2,Rect,Color};
 use node::*;
 use pathfinder::*;
 use std::rc::Rc;
-use std;
+use std::borrow::BorrowMut;
 
 static SIZE_COEFF : i32 = 5;
 
@@ -12,7 +12,6 @@ pub struct MainState {
     y: f32,
     path: Vec<Point>,
     shapes : Vec<Box<RectangleFieldShape>>,
-    i: i32
 }
 
 impl MainState {
@@ -21,22 +20,10 @@ impl MainState {
         let mut shapes : Vec<Box<FieldShape>> = Vec::new();
         let mut shapes_cp : Vec<Box<RectangleFieldShape>> = Vec::new();
 
-        /*shapes.push(Box::new(RectangleFieldShape::new(10, 10, 10, 10, false)));
-        shapes_cp.push(Box::new(RectangleFieldShape::new(10, 10, 10, 10, false)));
-        shapes.push(Box::new(RectangleFieldShape::new(20, 20, 10, 10, false)));
-        shapes_cp.push(Box::new(RectangleFieldShape::new(20, 20, 10, 10, false)));
-        shapes.push(Box::new(RectangleFieldShape::new(40, 20, 40, 40, false)));
-        shapes_cp.push(Box::new(RectangleFieldShape::new(20, 20, 10, 10, false)));
-        shapes.push(Box::new(RectangleFieldShape::new(40, 60, 40, 40, false)));
-        shapes_cp.push(Box::new(RectangleFieldShape::new(40, 60, 40, 40, false)));
-        shapes.push(Box::new(RectangleFieldShape::new(75, 75, 10, 10, false)));
-        shapes_cp.push(Box::new(RectangleFieldShape::new(75, 75, 10, 10, false)));
-        */
-
-        let (shapes, shapes_cp) = MainState::add_shape(shapes, shapes_cp, RectangleFieldShape::new(10, 10, 10, 10, false));
-        let (shapes, shapes_cp) = MainState::add_shape(shapes, shapes_cp, RectangleFieldShape::new(40, 20, 20, 20, false));
-        let (shapes, shapes_cp) = MainState::add_shape(shapes, shapes_cp, RectangleFieldShape::new(40, 60, 20, 20, false));
-        let (shapes, shapes_cp) = MainState::add_shape(shapes, shapes_cp, RectangleFieldShape::new(80, 80, 10, 10, false));
+        MainState::add_shape(shapes.borrow_mut(), shapes_cp.borrow_mut(), RectangleFieldShape::new(10, 10, 10, 10, false));
+        MainState::add_shape(shapes.borrow_mut(), shapes_cp.borrow_mut(), RectangleFieldShape::new(40, 20, 20, 20, false));
+        MainState::add_shape(shapes.borrow_mut(), shapes_cp.borrow_mut(), RectangleFieldShape::new(40, 60, 20, 20, false));
+        MainState::add_shape(shapes.borrow_mut(), shapes_cp.borrow_mut(), RectangleFieldShape::new(80, 80, 10, 10, false));
         
         let field = PathField::new(shapes, dim);
 
@@ -48,15 +35,14 @@ impl MainState {
 
         let path = pf.get_path();
 
-        let s = MainState { x: 0.0, y: 0.0, path: path, shapes: shapes_cp, i:0 };
+        let s = MainState { x: 0.0, y: 0.0, path: path, shapes: shapes_cp };
 
         Ok(s)
     }
 
-    fn add_shape(mut shapes : Vec<Box<FieldShape>>, mut shapes_cp : Vec<Box<RectangleFieldShape>>, shape: RectangleFieldShape) -> (Vec<Box<FieldShape>>, Vec<Box<RectangleFieldShape>>) {
+    fn add_shape(shapes : &mut Vec<Box<FieldShape>>, shapes_cp : &mut Vec<Box<RectangleFieldShape>>, shape: RectangleFieldShape) {
         shapes.push(Box::new(shape));
         shapes_cp.push(Box::new(shape.clone()));
-        return (shapes, shapes_cp);
     }
 }
 
@@ -86,6 +72,7 @@ impl event::EventHandler for MainState {
 
         for shape in shapes {
             let ref s = *shape;
+            graphics::set_color(ctx, Color::new(1.0, 0.0, 0.0, 1.0))?;
             graphics::rectangle(ctx, DrawMode::Fill, Rect::new(
                     self.to_screen(s.point.x), 
                     self.to_screen(s.point.y), 
@@ -94,6 +81,7 @@ impl event::EventHandler for MainState {
                 ))?;
         }
 
+        graphics::set_color(ctx, Color::new(1.0, 1.0, 1.0, 1.0))?;
         graphics::points(ctx,
                          &[Point2::new(self.x, self.y)],
                          SIZE_COEFF as f32)?;
