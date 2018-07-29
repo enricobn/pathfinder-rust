@@ -1,7 +1,6 @@
 extern crate ggez;
 mod node;
 mod pathfinder;
-mod circle_example;
 mod path_example;
 mod move_example;
 
@@ -11,17 +10,19 @@ use pathfinder::*;
 
 pub fn main() {
     //test_path_field();
-    
-    let c = conf::Conf::new();
+    run("Move example", Box::new(|ctx| move_example::MainState::new()));   
+}
+
+fn run<S>(title: &'static str, state: Box<Fn(&mut Context) -> S>) 
+where
+    S: event::EventHandler,
+{
+    let mut c = conf::Conf::new();
+    c.window_setup = c.window_setup.title(title);
+
     let ctx = &mut Context::load_from_conf("super_simple", "ggez", c).unwrap();
-
-    //let state = &mut circle_example::MainState::new(ctx).unwrap();
-    
-    //let state = &mut path_example::MainState::new(ctx).unwrap();
-
-    let state = &mut move_example::MainState::new(ctx).unwrap();
-    event::run(ctx, state).unwrap();
-    
+    let s = &mut state(ctx);
+    event::run(ctx, s).unwrap();
 }
 
 fn test_path_field() {

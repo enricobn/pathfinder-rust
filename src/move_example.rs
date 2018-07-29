@@ -14,6 +14,7 @@ use std::time::Instant;
 static SIZE_COEFF : i32 = 5;
 
 pub struct MainState {
+    pub title: &'static str,
     from: Vec<Point>,
     to: Vec<Point>,
     shapes : Vec<RectangleFieldShape>,
@@ -22,8 +23,8 @@ pub struct MainState {
 }
 
 impl MainState {
-    pub fn new(_ctx: &mut Context) -> GameResult<MainState> {
-        let dim = Dimension {width: 100, height: 100};
+    
+    pub fn new() -> MainState {
         let mut from : Vec<Point> = Vec::new();
         let mut to : Vec<Point> = Vec::new();
         let mut shapes : Vec<RectangleFieldShape> = Vec::new();
@@ -40,9 +41,7 @@ impl MainState {
             to.push(Point::new(0, 50-i));
         }
 
-        let s = MainState { from: from, to: to, shapes: shapes, start: Instant::now(), running: true };
-
-        Ok(s)
+        return MainState { title: "Move example", from: from, to: to, shapes: shapes, start: Instant::now(), running: true };
     }
 
 }
