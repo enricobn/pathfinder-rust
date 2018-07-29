@@ -2,8 +2,11 @@ use ggez::*;
 use ggez::graphics::{DrawMode,Point2,Rect,Color};
 use node::*;
 use pathfinder::*;
-use std::borrow::BorrowMut;
 use std::time::Instant;
+
+/*
+ * Time elapsed : Duration { secs: 88, nanos: 393584364 }
+ */
 
 static SIZE_COEFF : i32 = 5;
 
@@ -11,6 +14,8 @@ pub struct MainState {
     from: Vec<Point>,
     to: Vec<Point>,
     shapes : Vec<RectangleFieldShape>,
+    start: Instant,
+    running: bool
 }
 
 impl MainState {
@@ -23,7 +28,7 @@ impl MainState {
         shapes.push(RectangleFieldShape::new(10, 10, 10, 10, false));
         shapes.push(RectangleFieldShape::new(40, 20, 20, 20, false));
         shapes.push(RectangleFieldShape::new(40, 60, 20, 20, false));
-        shapes.push(RectangleFieldShape::new(80, 80, 10, 10, false));
+        shapes.push(RectangleFieldShape::new(75, 75, 10, 10, false));
         
         for i in 0..49 {
             from.push(Point::new(0, 50-i));
@@ -32,7 +37,7 @@ impl MainState {
             to.push(Point::new(0, 50-i));
         }
 
-        let s = MainState { from: from, to: to, shapes: shapes };
+        let s = MainState { from: from, to: to, shapes: shapes, start: Instant::now(), running: true };
 
         Ok(s)
     }
@@ -53,6 +58,8 @@ impl event::EventHandler for MainState {
         let mut froms : Vec<Point> = Vec::new();
         let mut tos : Vec<Point> = Vec::new();
 
+        let mut ended = true;
+
         while !self.from.is_empty() {
             let from = self.from.pop().unwrap();
             let to = self.to.pop().unwrap();
@@ -63,10 +70,20 @@ impl event::EventHandler for MainState {
                 continue;
             }
 
+            ended = false;
+
             let mut shapes : Vec<Box<FieldShape>> = Vec::new();
 
             for shape in &self.shapes {
                 shapes.push(Box::new(shape.clone()));
+            }
+
+            for point in &self.from {
+                shapes.push(Box::new(PointFieldShape {x: point.x, y: point.y, moving: false}));
+            }
+
+            for point in &froms {
+                shapes.push(Box::new(PointFieldShape {x: point.x, y: point.y, moving: false}));
             }
 
             let dim = Dimension {width: 100, height: 100};
@@ -79,8 +96,7 @@ impl event::EventHandler for MainState {
         
             let mut path = pf.get_path();
 
-            //let (start, duration) = (Instant::now(), start.elapsed());
-            //println!("Time elapsed : {:?}", duration);
+            
         
             if path.is_empty() {
                 froms.push(from);
@@ -88,6 +104,12 @@ impl event::EventHandler for MainState {
                 froms.push(path.pop().unwrap());
             }
             tos.push(to);
+        }
+
+        if self.running &ended {
+            self.running = false;
+            let duration =self.start.elapsed();
+            println!("Time elapsed : {:?}", duration);
         }
 
         self.from = froms;
