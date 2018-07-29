@@ -18,8 +18,9 @@ pub struct MainState {
     from: Vec<Point>,
     to: Vec<Point>,
     shapes : Vec<RectangleFieldShape>,
-    start: Instant,
-    running: bool
+    start: Option<Instant>,
+    ended: bool,
+    first: bool,
 }
 
 impl MainState {
@@ -41,7 +42,7 @@ impl MainState {
             to.push(Point::new(0, 50-i));
         }
 
-        MainState { title: "Move example", from: from, to: to, shapes: shapes, start: Instant::now(), running: true }
+        MainState { title: "Move example", from: from, to: to, shapes: shapes, start: None, ended: false, first : true }
     }
 
 }
@@ -57,6 +58,18 @@ impl MainState {
 impl event::EventHandler for MainState {
 
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
+
+        // the first time, I want only to draw the initial position.
+        if self.first {
+            self.first = false;
+            return Ok(());
+        }
+
+        // but I initialize the time on the first real update.
+        if self.start.is_none() {
+            self.start = Some(Instant::now());
+        }
+
         let mut froms : Vec<Point> = Vec::new();
         let mut tos : Vec<Point> = Vec::new();
 
@@ -93,13 +106,9 @@ impl event::EventHandler for MainState {
             let field = PathField::new(shapes, dim);
 
             let pf = AStarPathFinder {field: field, from : from.clone(), to : to.clone()};
-
-            //let start = Instant::now();
         
             let mut path = pf.get_path();
 
-            
-        
             if path.is_empty() {
                 froms.push(from);
             } else {
@@ -108,9 +117,9 @@ impl event::EventHandler for MainState {
             tos.push(to);
         }
 
-        if self.running &ended {
-            self.running = false;
-            let duration =self.start.elapsed();
+        if !self.ended && ended {
+            self.ended = true;
+            let duration = self.start.unwrap().elapsed();
             println!("Time elapsed : {:?}", duration);
         }
 

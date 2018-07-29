@@ -7,7 +7,6 @@ mod move_example;
 use ggez::*;
 use node::*;
 use pathfinder::*;
-use std::borrow::BorrowMut;
 
 pub fn main() {
     //test_path_field();
