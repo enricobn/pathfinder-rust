@@ -7,13 +7,15 @@ mod move_example;
 use ggez::*;
 use node::*;
 use pathfinder::*;
+use std::borrow::BorrowMut;
 
 pub fn main() {
     //test_path_field();
-    run("Move example", Box::new(|ctx| move_example::MainState::new()));   
+    //run("Path example", &mut path_example::MainState::new());
+    run("Move example", &mut move_example::MainState::new());
 }
 
-fn run<S>(title: &'static str, state: Box<Fn(&mut Context) -> S>) 
+fn run<S>(title: &'static str, state: &mut S) 
 where
     S: event::EventHandler,
 {
@@ -21,8 +23,7 @@ where
     c.window_setup = c.window_setup.title(title);
 
     let ctx = &mut Context::load_from_conf("super_simple", "ggez", c).unwrap();
-    let s = &mut state(ctx);
-    event::run(ctx, s).unwrap();
+    event::run(ctx, state).unwrap();
 }
 
 fn test_path_field() {

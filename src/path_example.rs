@@ -15,7 +15,7 @@ pub struct MainState {
 }
 
 impl MainState {
-    pub fn new(_ctx: &mut Context) -> GameResult<MainState> {
+    pub fn new() -> MainState {
         let dim = Dimension {width: 100, height: 100};
         let mut shapes : Vec<Box<FieldShape>> = Vec::new();
         let mut shapes_cp : Vec<Box<RectangleFieldShape>> = Vec::new();
@@ -40,9 +40,7 @@ impl MainState {
         let (start, duration) = (Instant::now(), start.elapsed());
         println!("Time elapsed : {:?}", duration);
 
-        let s = MainState { x: 0.0, y: 0.0, path: path, shapes: shapes_cp };
-
-        Ok(s)
+        MainState { x: 0.0, y: 0.0, path: path, shapes: shapes_cp }
     }
 
     fn add_shape(shapes : &mut Vec<Box<FieldShape>>, shapes_cp : &mut Vec<Box<RectangleFieldShape>>, shape: RectangleFieldShape) {

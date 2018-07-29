@@ -23,7 +23,7 @@ pub struct MainState {
 }
 
 impl MainState {
-    
+
     pub fn new() -> MainState {
         let mut from : Vec<Point> = Vec::new();
         let mut to : Vec<Point> = Vec::new();
@@ -41,7 +41,7 @@ impl MainState {
             to.push(Point::new(0, 50-i));
         }
 
-        return MainState { title: "Move example", from: from, to: to, shapes: shapes, start: Instant::now(), running: true };
+        MainState { title: "Move example", from: from, to: to, shapes: shapes, start: Instant::now(), running: true }
     }
 
 }
