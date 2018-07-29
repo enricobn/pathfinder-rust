@@ -41,7 +41,7 @@ impl AStarPathFinder {
             match min_node {
                 Some(m_node) => {
                     if m_node.point.eq(&self.to) {
-                        target_node = (m_node).clone();
+                        target_node = m_node.clone();
                         break;
                     }
 
@@ -65,7 +65,7 @@ impl AStarPathFinder {
                         if self.field.contains(point) && (point.eq(&self.to) || !self.field.occupied_from(point, self.from)) {
                             if !closed.contains_key(&point) {
                                 let mut node = Node {point : point.to_owned(), parent: None, from: &self.from, to: &self.to};
-                                node.set_parent((m_node).clone());
+                                node.set_parent(m_node.clone());
                                 if !open.contains_key(&point) {
                                     open.insert(point, node);
                                 } else {
@@ -73,16 +73,16 @@ impl AStarPathFinder {
                                     let mut got_some = got.unwrap().clone();
                                     let gToMin = m_node.g_of(&got_some);
                                     if gToMin < node.g() {
-                                        got_some.set_parent((m_node).clone());
+                                        got_some.set_parent(m_node.clone());
                                     }
                                 }
                             }
                         }
                     }
                         
-                    closed.insert(m_node.point, (m_node).clone());
-                    
                     open.remove(&m_node.point);
+
+                    closed.insert(m_node.point, m_node);
 
                 },
                 None => {

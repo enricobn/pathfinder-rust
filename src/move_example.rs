@@ -5,12 +5,8 @@ use pathfinder::*;
 use std::time::Instant;
 
 /*
- * Time elapsed : Duration { secs: 88, nanos: 393584364 }
- * 
- * Set moving to true: I don't know if it's correct, but it's similar to the java version.
- * Time elapsed : Duration { secs: 16, nanos: 944105036 }
+ * Time elapsed : Duration { secs: 16, nanos: 513383040 }
  */
-
 static SIZE_COEFF : i32 = 5;
 
 pub struct MainState {
