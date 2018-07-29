@@ -6,6 +6,9 @@ use std::time::Instant;
 
 /*
  * Time elapsed : Duration { secs: 88, nanos: 393584364 }
+ * 
+ * Set moving to true: I don't know if it's correct, but it's similar to the java version.
+ * Time elapsed : Duration { secs: 16, nanos: 944105036 }
  */
 
 static SIZE_COEFF : i32 = 5;
@@ -79,11 +82,11 @@ impl event::EventHandler for MainState {
             }
 
             for point in &self.from {
-                shapes.push(Box::new(PointFieldShape {x: point.x, y: point.y, moving: false}));
+                shapes.push(Box::new(PointFieldShape {x: point.x, y: point.y, moving: true}));
             }
 
             for point in &froms {
-                shapes.push(Box::new(PointFieldShape {x: point.x, y: point.y, moving: false}));
+                shapes.push(Box::new(PointFieldShape {x: point.x, y: point.y, moving: true}));
             }
 
             let dim = Dimension {width: 100, height: 100};
