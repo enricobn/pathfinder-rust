@@ -2,8 +2,8 @@ use ggez::*;
 use ggez::graphics::{DrawMode,Point2,Rect,Color};
 use node::*;
 use pathfinder::*;
-use std::rc::Rc;
 use std::borrow::BorrowMut;
+use std::time::Instant;
 
 static SIZE_COEFF : i32 = 5;
 
@@ -33,7 +33,12 @@ impl MainState {
 
         let pf = AStarPathFinder {field: field, from : from, to : to};
 
+        let start = Instant::now();
+        
         let path = pf.get_path();
+
+        let (start, duration) = (Instant::now(), start.elapsed());
+        println!("Time elapsed : {:?}", duration);
 
         let s = MainState { x: 0.0, y: 0.0, path: path, shapes: shapes_cp };
 

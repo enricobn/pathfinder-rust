@@ -3,9 +3,9 @@ mod node;
 mod pathfinder;
 mod circle_example;
 mod path_example;
+mod move_example;
 
 use ggez::*;
-use ggez::graphics::{DrawMode, Point2};
 use node::*;
 use pathfinder::*;
 
@@ -17,7 +17,9 @@ pub fn main() {
 
     //let state = &mut circle_example::MainState::new(ctx).unwrap();
     
-    let state = &mut path_example::MainState::new(ctx).unwrap();
+    //let state = &mut path_example::MainState::new(ctx).unwrap();
+
+    let state = &mut move_example::MainState::new(ctx).unwrap();
     event::run(ctx, state).unwrap();
     
 }
