@@ -20,6 +20,7 @@ where
 {
     let mut c = conf::Conf::new();
     c.window_setup = c.window_setup.title(title);
+    c.window_mode.vsync = false;
 
     let ctx = &mut Context::load_from_conf("super_simple", "ggez", c).unwrap();
     event::run(ctx, state).unwrap();

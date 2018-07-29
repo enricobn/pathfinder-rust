@@ -12,7 +12,7 @@ pub struct AStarPathFinder {
 impl AStarPathFinder {
 
     pub fn get_path(&self) -> Vec<Point> {
-        let initial_node = Node {point : self.from, parent: None, from: &self.from, to: &self.to};
+        let initial_node = Node {point : self.from, parent: None, from: &self.from, to: &self.to, g: 0};
 
         let mut open   : HashMap<Point,Node> = HashMap::new();
         let mut closed : HashMap<Point,Node> = HashMap::new();
@@ -64,7 +64,7 @@ impl AStarPathFinder {
                         // I do not consider the end point to be occupied, so I can move towards it
                         if self.field.contains(point) && (point.eq(&self.to) || !self.field.occupied_from(point, self.from)) {
                             if !closed.contains_key(&point) {
-                                let mut node = Node {point : point.to_owned(), parent: None, from: &self.from, to: &self.to};
+                                let mut node = Node {point : point.to_owned(), parent: None, from: &self.from, to: &self.to, g: 0};
                                 node.set_parent(m_node.clone());
                                 if !open.contains_key(&point) {
                                     open.insert(point, node);
@@ -113,7 +113,8 @@ pub struct Node<'a> {
     point : Point,
     parent: Option<Rc<Node<'a>>>,
     from : &'a Point,
-    to : &'a Point
+    to : &'a Point,
+    g: i32
 }
 
 impl <'a> Node<'a> {
@@ -122,12 +123,7 @@ impl <'a> Node<'a> {
     }
         
     pub fn g(&'a self) -> i32 {
-        match self.parent {
-            Some(ref node) => {
-                return self.g_of(&node);
-            },
-            None => 0
-        }
+        self.g
     }
 
     pub fn g_of(&self, node: &'a Node<'a>) -> i32 {
@@ -146,6 +142,14 @@ impl <'a> Node<'a> {
 
     pub fn set_parent(&mut self, node: Node<'a>) {
         self.parent = Some(Rc::new(node));
+
+        match self.parent {
+            Some(ref node) => {
+                self.g = self.g_of(&node);
+            },
+            None => self.g = 0
+        }
+
     }
 
 }
