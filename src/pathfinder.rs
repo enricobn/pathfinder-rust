@@ -61,18 +61,17 @@ impl AStarPathFinder {
                     for i in 0..7 {
                         let point = array[i];
 
-                        // I do not consider the end point to be occupied, so I can move towards it
+                        // I do not consider the end point to be occupied, so I can move towards.
                         if self.field.contains(point) && (point.eq(&self.to) || !self.field.occupied_from(point, self.from)) {
                             if !closed.contains_key(&point) {
                                 let mut node = Node::new(point.to_owned(), Some(m_node.clone()), &self.from, &self.to);
                                 if !open.contains_key(&point) {
                                     open.insert(point, node);
                                 } else {
-                                    let got = open.get(&point);
-                                    let mut got_some = got.unwrap().clone();
-                                    let gToMin = m_node.g_of(&got_some);
+                                    let got = open.get_mut(&point).unwrap();
+                                    let gToMin = m_node.g_of(&got);
                                     if gToMin < node.g {
-                                        got_some.set_parent(m_node.clone());
+                                        got.set_parent(m_node.clone());
                                     }
                                 }
                             }
@@ -95,7 +94,7 @@ impl AStarPathFinder {
         let mut result : Vec<Point> = Vec::new();
 
         while target_node.parent.is_some() {
-            // the path can contains occupied points. Normally it can be only the end point 
+            // The path can contains occupied points. Normally it can be only the end point.
             if !self.field.occupied(target_node.point) {
                 result.push(target_node.point);
             }

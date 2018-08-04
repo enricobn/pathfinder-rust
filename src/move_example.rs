@@ -5,7 +5,7 @@ use pathfinder::*;
 use std::time::Instant;
 
 /*
- * Time elapsed : Duration { secs: 3, nanos: 770322539 }
+ * Time elapsed : Duration { secs: 2, nanos: 699392551 }
  */
 static SIZE_COEFF : i32 = 5;
 
@@ -90,7 +90,7 @@ impl event::EventHandler for MainState {
             }
 
             for point in &self.from {
-                shapes.push(Box::new(PointFieldShape {x: point.x, y: point.y, moving: true}));
+                shapes.push(Box::new(PointFieldShape {x: point.x, y: point.y, moving: false}));
             }
 
             for point in &froms {

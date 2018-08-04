@@ -147,7 +147,7 @@ impl PathField {
     pub fn occupied_(&self, point: Point, near: bool) -> bool {
         for field_shape in self.shapes.iter() {
             if field_shape.contains(point) {
-                if !field_shape.is_moving() || near {
+                if /* !field_shape.is_moving() ||*/ near {
                     return true;
                 }
             }

@@ -7,11 +7,21 @@ mod move_example;
 use ggez::*;
 use base::*;
 use pathfinder::*;
+use std::env;
 
 pub fn main() {
-    //test_path_field();
-    //run("Path example", &mut path_example::MainState::new());
-    run("Move example", &mut move_example::MainState::new());
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() < 2 || args[1] == "move" {
+        run("Move example", &mut move_example::MainState::new());
+    } else if args[1] == "path" {
+        run("Path example", &mut path_example::MainState::new());
+    } else if args[1] == "test" {
+        test();
+    } else {
+        println!("Unknown argument {}", args[1]);
+        println!("Valid arguments are move, path or test", );
+    }
 }
 
 fn run<S>(title: &'static str, state: &mut S) 
@@ -26,7 +36,7 @@ where
     event::run(ctx, state).unwrap();
 }
 
-fn test_path_field() {
+fn test() {
     let dim = Dimension {width: 100, height: 100};
     let mut shapes : Vec<Box<FieldShape>> = Vec::new();
 
