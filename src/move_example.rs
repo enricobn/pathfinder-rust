@@ -5,7 +5,7 @@ use pathfinder::*;
 use std::time::Instant;
 
 /*
- * Time elapsed : Duration { secs: 3, nanos: 880039753 }
+ * Time elapsed : Duration { secs: 3, nanos: 770322539 }
  */
 static SIZE_COEFF : i32 = 5;
 
