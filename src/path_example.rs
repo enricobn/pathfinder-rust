@@ -20,10 +20,10 @@ impl MainState {
         let mut shapes : Vec<Box<FieldShape>> = Vec::new();
         let mut shapes_cp : Vec<Box<RectangleFieldShape>> = Vec::new();
 
-        MainState::add_shape(shapes.borrow_mut(), shapes_cp.borrow_mut(), RectangleFieldShape::new(10, 10, 10, 10, false));
-        MainState::add_shape(shapes.borrow_mut(), shapes_cp.borrow_mut(), RectangleFieldShape::new(40, 20, 20, 20, false));
-        MainState::add_shape(shapes.borrow_mut(), shapes_cp.borrow_mut(), RectangleFieldShape::new(40, 60, 20, 20, false));
-        MainState::add_shape(shapes.borrow_mut(), shapes_cp.borrow_mut(), RectangleFieldShape::new(80, 80, 10, 10, false));
+        MainState::add_shape(shapes.borrow_mut(), shapes_cp.borrow_mut(), RectangleFieldShape::new(10, 10, 10, 10));
+        MainState::add_shape(shapes.borrow_mut(), shapes_cp.borrow_mut(), RectangleFieldShape::new(40, 20, 20, 20));
+        MainState::add_shape(shapes.borrow_mut(), shapes_cp.borrow_mut(), RectangleFieldShape::new(40, 60, 20, 20));
+        MainState::add_shape(shapes.borrow_mut(), shapes_cp.borrow_mut(), RectangleFieldShape::new(80, 80, 10, 10));
         
         let field = PathField::new(shapes, dim);
 

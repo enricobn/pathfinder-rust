@@ -40,8 +40,8 @@ fn test() {
     let dim = Dimension {width: 100, height: 100};
     let mut shapes : Vec<Box<FieldShape>> = Vec::new();
 
-    shapes.push(Box::new(RectangleFieldShape {point: Point {x:0, y:0}, width:10, height:10, moving: false}));
-    shapes.push(Box::new(RectangleFieldShape {point: Point {x:20, y:20}, width:10, height:10, moving: false}));
+    shapes.push(Box::new(RectangleFieldShape {point: Point {x:0, y:0}, width:10, height:10}));
+    shapes.push(Box::new(RectangleFieldShape {point: Point {x:20, y:20}, width:10, height:10}));
 
     let field = PathField::new(shapes, dim);
     

@@ -5,7 +5,8 @@ use pathfinder::*;
 use std::time::Instant;
 
 /*
- * Time elapsed : Duration { secs: 2, nanos: 699392551 }
+ * Intel(R) Core(TM) i7 CPU       M 620  @ 2.67GHz
+ * Time elapsed : Duration { secs: 2, nanos: 647913235 }
  */
 static SIZE_COEFF : i32 = 5;
 
@@ -26,10 +27,10 @@ impl MainState {
         let mut to : Vec<Point> = Vec::new();
         let mut shapes : Vec<RectangleFieldShape> = Vec::new();
 
-        shapes.push(RectangleFieldShape::new(10, 10, 10, 10, false));
-        shapes.push(RectangleFieldShape::new(40, 20, 20, 20, false));
-        shapes.push(RectangleFieldShape::new(40, 60, 20, 20, false));
-        shapes.push(RectangleFieldShape::new(75, 75, 10, 10, false));
+        shapes.push(RectangleFieldShape::new(10, 10, 10, 10));
+        shapes.push(RectangleFieldShape::new(40, 20, 20, 20));
+        shapes.push(RectangleFieldShape::new(40, 60, 20, 20));
+        shapes.push(RectangleFieldShape::new(75, 75, 10, 10));
         
         for i in 0..49 {
             from.push(Point::new(0, 50-i));
@@ -90,11 +91,11 @@ impl event::EventHandler for MainState {
             }
 
             for point in &self.from {
-                shapes.push(Box::new(PointFieldShape {x: point.x, y: point.y, moving: false}));
+                shapes.push(Box::new(PointFieldShape {x: point.x, y: point.y}));
             }
 
             for point in &froms {
-                shapes.push(Box::new(PointFieldShape {x: point.x, y: point.y, moving: true}));
+                shapes.push(Box::new(PointFieldShape {x: point.x, y: point.y}));
             }
 
             let dim = Dimension {width: 100, height: 100};

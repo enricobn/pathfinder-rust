@@ -40,15 +40,12 @@ pub trait FieldShape {
     fn contains(&self, point: Point) -> bool;
     
     fn mv(&self, x_diff: i32, y_diff: i32) -> Self where Self: Sized;
-    
-    fn is_moving(&self) -> bool;
         
 }
 
 pub struct PointFieldShape {
     pub x : i32,
-    pub y : i32,
-    pub moving : bool
+    pub y : i32
 }
 
 impl FieldShape for PointFieldShape {
@@ -58,7 +55,7 @@ impl FieldShape for PointFieldShape {
     }
     
     fn set_location(&self, location: Point) -> Self where Self: Sized {
-        return PointFieldShape {x: location.x, y: location.y, moving: self.moving};
+        return PointFieldShape {x: location.x, y: location.y};
     }
     
     fn contains(&self, point: Point) -> bool {
@@ -66,27 +63,22 @@ impl FieldShape for PointFieldShape {
     }
     
     fn mv(&self, x_diff: i32, y_diff: i32) -> Self where Self: Sized {
-        return PointFieldShape {x: self.location().x + x_diff, y: self.location().y + y_diff, moving: self.moving};
+        return PointFieldShape {x: self.location().x + x_diff, y: self.location().y + y_diff};
     }
     
-    fn is_moving(&self) -> bool {
-        return self.moving;
-    }
-
 }
 
 #[derive(Copy, Clone)]
 pub struct RectangleFieldShape {
     pub point : Point,
     pub width : i32,
-    pub height : i32,
-    pub moving : bool
+    pub height : i32
 }
 
 impl RectangleFieldShape {
 
-    pub fn new(x: i32, y: i32, width: i32, height: i32, moving: bool) -> RectangleFieldShape {
-        return RectangleFieldShape {point: Point::new(x, y), width: width, height: height, moving: moving};
+    pub fn new(x: i32, y: i32, width: i32, height: i32) -> RectangleFieldShape {
+        return RectangleFieldShape {point: Point::new(x, y), width: width, height: height};
     }
     
     fn get_max_x(&self) -> i32 {
@@ -116,10 +108,6 @@ impl FieldShape for RectangleFieldShape {
     fn mv(&self, x_diff: i32, y_diff: i32) -> Self where Self: Sized {
         return self.set_location(Point {x: self.point.x + x_diff, y: self.point.y + y_diff});
     }
-    
-    fn is_moving(&self) -> bool {
-        return self.moving;
-    }
 
 }
 
@@ -147,7 +135,7 @@ impl PathField {
     pub fn occupied_(&self, point: Point, near: bool) -> bool {
         for field_shape in self.shapes.iter() {
             if field_shape.contains(point) {
-                if /* !field_shape.is_moving() ||*/ near {
+                if near {
                     return true;
                 }
             }
