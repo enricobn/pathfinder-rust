@@ -1,3 +1,3 @@
-To compile and run
--------------------
-cargo run
+To compile and run, optimized
+------------------------------
+cargo run --release

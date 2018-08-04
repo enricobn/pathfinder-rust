@@ -12,7 +12,7 @@ pub struct AStarPathFinder {
 impl AStarPathFinder {
 
     pub fn get_path(&self) -> Vec<Point> {
-        let initial_node = Node {point : self.from, parent: None, from: &self.from, to: &self.to, g: 0};
+        let initial_node = Node::new(self.from, None, &self.from, &self.to);
 
         let mut open   : HashMap<Point,Node> = HashMap::new();
         let mut closed : HashMap<Point,Node> = HashMap::new();
@@ -31,7 +31,7 @@ impl AStarPathFinder {
             let mut min_node = None;
         
             for node in open.values() {
-                let f = node.f();
+                let f = node.f;
                 if min_node.is_none() || f < min {
                     min = f;
                     min_node = Some(node.clone());
@@ -64,15 +64,14 @@ impl AStarPathFinder {
                         // I do not consider the end point to be occupied, so I can move towards it
                         if self.field.contains(point) && (point.eq(&self.to) || !self.field.occupied_from(point, self.from)) {
                             if !closed.contains_key(&point) {
-                                let mut node = Node {point : point.to_owned(), parent: None, from: &self.from, to: &self.to, g: 0};
-                                node.set_parent(m_node.clone());
+                                let mut node = Node::new(point.to_owned(), Some(m_node.clone()), &self.from, &self.to);
                                 if !open.contains_key(&point) {
                                     open.insert(point, node);
                                 } else {
                                     let got = open.get(&point);
                                     let mut got_some = got.unwrap().clone();
                                     let gToMin = m_node.g_of(&got_some);
-                                    if gToMin < node.g() {
+                                    if gToMin < node.g {
                                         got_some.set_parent(m_node.clone());
                                     }
                                 }
@@ -109,35 +108,37 @@ impl AStarPathFinder {
 }
 
 #[derive(Clone)]
-pub struct Node<'a> {
+struct Node<'a> {
     point : Point,
     parent: Option<Rc<Node<'a>>>,
     from : &'a Point,
     to : &'a Point,
-    g: i32
+    g: i32,
+    f: i32,
+    h: i32
 }
 
 impl <'a> Node<'a> {
-    pub fn f(&self) -> i32 {
-        return self.g() + self.h();
-    }
-        
-    pub fn g(&'a self) -> i32 {
-        self.g
+
+    pub fn new(point: Point, parent: Option<Node<'a>>, from : &'a Point, to : &'a Point) -> Node<'a> {
+        let mut node = Node {point : point, parent: None, from: from, to: to, g: 0, f: 0, 
+            h: ((to.x - point.x).abs() + (to.y - point.y).abs()) * 10};
+        if parent.is_some() {
+            node.set_parent(parent.unwrap());
+        } else {
+            node.f = node.g + node.h;
+        }
+        return node;
     }
 
     pub fn g_of(&self, node: &'a Node<'a>) -> i32 {
-        let mut g = node.g();
+        let mut g = node.g;
         if self.point.x == node.point.x || self.point.y == node.point.y {
             g += 10;
         } else {
             g += 14;
         }
-        return g;        
-    }
-
-    pub fn h(&self) -> i32 {
-        return ((self.to.x - self.point.x).abs() + (self.to.y - self.point.y).abs()) * 10;
+        return g;
     }
 
     pub fn set_parent(&mut self, node: Node<'a>) {
@@ -149,7 +150,7 @@ impl <'a> Node<'a> {
             },
             None => self.g = 0
         }
-
+        self.f = self.g + self.h;
     }
 
 }
