@@ -1,11 +1,11 @@
 extern crate ggez;
-mod node;
+mod base;
 mod pathfinder;
 mod path_example;
 mod move_example;
 
 use ggez::*;
-use node::*;
+use base::*;
 use pathfinder::*;
 
 pub fn main() {

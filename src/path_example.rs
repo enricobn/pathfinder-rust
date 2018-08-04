@@ -1,6 +1,6 @@
 use ggez::*;
 use ggez::graphics::{DrawMode,Point2,Rect,Color};
-use node::*;
+use base::*;
 use pathfinder::*;
 use std::borrow::BorrowMut;
 use std::time::Instant;
