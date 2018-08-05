@@ -8,6 +8,7 @@ use ggez::*;
 use base::*;
 use pathfinder::*;
 use std::env;
+use std::process;
 
 pub fn main() {
     let args: Vec<String> = env::args().collect();
@@ -21,6 +22,7 @@ pub fn main() {
     } else {
         println!("Unknown argument {}", args[1]);
         println!("Valid arguments are move, path or test", );
+        process::exit(1);
     }
 }
 
