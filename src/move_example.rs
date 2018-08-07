@@ -6,7 +6,8 @@ use std::time::Instant;
 
 /*
  * Intel(R) Core(TM) i7 CPU       M 620  @ 2.67GHz
- * Time elapsed : Duration { secs: 2, nanos: 647913235 }
+ * rustc 1.27.2 
+ * Time elapsed : Duration { secs: 2, nanos: 637853786 }
  */
 static SIZE_COEFF : i32 = 5;
 

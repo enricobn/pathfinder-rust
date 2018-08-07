@@ -141,15 +141,9 @@ impl <'a> Node<'a> {
     }
 
     pub fn set_parent(&mut self, node: Node<'a>) {
-        self.parent = Some(Rc::new(node));
-
-        match self.parent {
-            Some(ref node) => {
-                self.g = self.g_of(&node);
-            },
-            None => self.g = 0
-        }
+        self.g = self.g_of(&node);
         self.f = self.g + self.h;
+        self.parent = Some(Rc::new(node));
     }
 
 }
