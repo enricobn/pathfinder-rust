@@ -112,32 +112,21 @@ impl FieldShape for RectangleFieldShape {
 }
 
 pub struct PathField {
-    shapes: Vec<Box<FieldShape>>,
+    shapes: Vec<Box<dyn FieldShape>>,
     size: Dimension,
     rectangle: Rectangle
 }
 
 impl PathField {
 
-    pub fn new(shapes: Vec<Box<FieldShape>>, size: Dimension) -> Self {
+    pub fn new(shapes: Vec<Box<dyn FieldShape>>, size: Dimension) -> Self {
         return PathField {shapes: shapes, rectangle : Rectangle {point : Point {x:0, y:0}, width: size.width, height : size.height}, size: size};
     }
 
-    pub fn occupied_from(&self, point: Point, from: Point) -> bool {
-        return self.occupied_(point, point.distance(from) < 3);
-    }
-
-    // TODO 
     pub fn occupied(&self, point: Point) -> bool {
-        return self.occupied_(point, true);
-    }
-
-    pub fn occupied_(&self, point: Point, near: bool) -> bool {
         for field_shape in self.shapes.iter() {
             if field_shape.contains(point) {
-                if near {
-                    return true;
-                }
+                return true;
             }
         }
         return false;

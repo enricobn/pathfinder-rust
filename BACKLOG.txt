@@ -1,0 +1,10 @@
+DOING
+------
+
+BUGS
+-----
+- path_example (cargo run --release path) seems to skip some points
+
+NEXT
+-----
+- try to optimize
