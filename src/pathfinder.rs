@@ -64,12 +64,14 @@ impl AStarPathFinder {
                         // I do not consider the end point to be occupied, so I can move towards.
                         if self.field.contains(point) && (point.eq(&self.to) || !self.field.occupied(point)) {
                             if !closed.contains_key(&point) {
-                                let node = Node::new(point.to_owned(), Some(m_node.clone()), &self.to);
                                 if !open.contains_key(&point) {
+                                    let node = Node::new(point, Some(m_node.clone()), &self.to);
                                     open.insert(point, node);
                                 } else {
+                                    let node = Node::new(point, Some(m_node.clone()), &self.to);
                                     let got = open.get_mut(&point).unwrap();
                                     let g_to_min = m_node.g_of(&got);
+
                                     if g_to_min < node.g {
                                         got.set_parent(m_node.clone());
                                     }
@@ -80,7 +82,7 @@ impl AStarPathFinder {
                         
                     open.remove(&m_node.point);
 
-                    closed.insert(m_node.point, m_node);
+                    closed.insert(m_node.point, m_node.clone());
 
                 },
                 None => {
