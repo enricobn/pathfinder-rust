@@ -8,7 +8,7 @@ use path_example::Point2;
 /*
  * AMD Ryzen 5 3600 6-Core Processor
  * rustc 1.43.0
- * Time elapsed : 5.28 sec
+ * Time elapsed : 5.11 sec
  */
 static SIZE_COEFF : i32 = 5;
 

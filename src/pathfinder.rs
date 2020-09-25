@@ -12,7 +12,7 @@ pub struct AStarPathFinder {
 impl AStarPathFinder {
 
     pub fn get_path(&self) -> Vec<Point> {
-        let initial_node = Node::new(self.from, None, &self.from, &self.to);
+        let initial_node = Node::new(self.from, None, &self.to);
 
         let mut open   : HashMap<Point,Node> = HashMap::new();
         let mut closed : HashMap<Point,Node> = HashMap::new();
@@ -64,7 +64,7 @@ impl AStarPathFinder {
                         // I do not consider the end point to be occupied, so I can move towards.
                         if self.field.contains(point) && (point.eq(&self.to) || !self.field.occupied(point)) {
                             if !closed.contains_key(&point) {
-                                let node = Node::new(point.to_owned(), Some(m_node.clone()), &self.from, &self.to);
+                                let node = Node::new(point.to_owned(), Some(m_node.clone()), &self.to);
                                 if !open.contains_key(&point) {
                                     open.insert(point, node);
                                 } else {
@@ -93,13 +93,15 @@ impl AStarPathFinder {
 
         let mut result : Vec<Point> = Vec::new();
 
-        while target_node.parent.is_some() {
+        let mut node = &Rc::new(target_node);
+
+        while node.parent.is_some() {
             // The path can contains occupied points. Normally it can be only the end point.
-            if !self.field.occupied(target_node.point) {
-                result.push(target_node.point);
+            if !self.field.occupied(node.point) {
+                result.push(node.point);
             }
 
-            target_node = (*target_node.parent.unwrap()).clone();
+            node = node.parent.as_ref().unwrap();
         }
         return result;
     }
@@ -107,20 +109,18 @@ impl AStarPathFinder {
 }
 
 #[derive(Clone)]
-struct Node<'a> {
+struct Node {
     point : Point,
-    parent: Option<Rc<Node<'a>>>,
-    from : &'a Point,
-    to : &'a Point,
+    parent: Option<Rc<Node>>,
     g: i32,
     f: i32,
     h: i32
 }
 
-impl <'a> Node<'a> {
+impl Node {
 
-    pub fn new(point: Point, parent: Option<Node<'a>>, from : &'a Point, to : &'a Point) -> Node<'a> {
-        let mut node = Node { point, parent: None, from, to, g: 0, f: 0,
+    pub fn new(point: Point, parent: Option<Node>, to : &Point) -> Node {
+        let mut node = Node { point, parent: None, g: 0, f: 0,
             h: ((to.x - point.x).abs() + (to.y - point.y).abs()) * 10 };
         if parent.is_some() {
             node.set_parent(parent.unwrap());
@@ -130,7 +130,7 @@ impl <'a> Node<'a> {
         return node;
     }
 
-    pub fn g_of(&self, node: &'a Node<'a>) -> i32 {
+    pub fn g_of(&self, node: &Node) -> i32 {
         let mut g = node.g;
         if self.point.x == node.point.x || self.point.y == node.point.y {
             g += 10;
@@ -140,7 +140,7 @@ impl <'a> Node<'a> {
         return g;
     }
 
-    pub fn set_parent(&mut self, node: Node<'a>) {
+    pub fn set_parent(&mut self, node: Node) {
         self.g = self.g_of(&node);
         self.f = self.g + self.h;
         self.parent = Some(Rc::new(node));
