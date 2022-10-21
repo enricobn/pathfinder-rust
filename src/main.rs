@@ -16,9 +16,9 @@ pub fn main() -> GameResult<()> {
     let args: Vec<String> = env::args().collect();
 
     if args.len() < 2 || args[1] == "move" {
-        run("Move example", &mut move_example::MainState::new())
+        run("Move example", move_example::MainState::new())
     } else if args[1] == "path" {
-        run("Path example", &mut path_example::MainState::new())
+        run("Path example", path_example::MainState::new())
     } else if args[1] == "test" {
         test()
     } else {
@@ -29,9 +29,10 @@ pub fn main() -> GameResult<()> {
 
 }
 
-fn run<S>(title: &'static str, state: &mut S) -> Result<(), GameError>
+fn run<S>(title: &'static str, state: S) -> Result<(), GameError>
 where
-    S: event::EventHandler,
+    S: event::EventHandler<ggez::GameError>,
+    S: 'static
 {
     let resource_dir = if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
         let mut path = path::PathBuf::from(manifest_dir);
@@ -56,10 +57,10 @@ where
         .window_mode(window_mode)
         .add_resource_path(resource_dir);
 
-    let (ctx, events_loop) = &mut cb.build()?;
+    let (ctx, events_loop) = cb.build()?;
 
-    println!("Drawable size {:?}", graphics::drawable_size(ctx));
-    println!("Screen coordinates {:?}", graphics::screen_coordinates(ctx));
+    println!("Drawable size {:?}", graphics::drawable_size(&ctx));
+    println!("Screen coordinates {:?}", graphics::screen_coordinates(&ctx));
 
     event::run(ctx, events_loop, state)
 }
