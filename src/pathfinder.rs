@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use base::*;
+use crate::base::*;
 
 pub struct AStarPathFinder {
     pub field: PathField,

@@ -7,8 +7,8 @@ use path_example::Point2;
 
 /*
  * AMD Ryzen 5 3600 6-Core Processor
- * rustc 1.43.0
- * Time elapsed : 4.99 sec
+ * rustc 1.73.0
+ * Time elapsed : 4.55 sec
  */
 static SIZE_COEFF : i32 = 5;
 
@@ -136,8 +136,10 @@ impl event::EventHandler<ggez::GameError> for MainState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        let black = Color::new(0.0, 0.0, 0.0, 1.0);
-        graphics::clear(ctx, black);
+        let mut canvas = graphics::Canvas::from_frame(
+            ctx,
+            Color::new(0.0, 0.0, 0.0, 1.0),
+        );
 
         // TODO use MeshBuilder?
 
@@ -159,7 +161,7 @@ impl event::EventHandler<ggez::GameError> for MainState {
 
             let param = DrawParam::new().dest(Point2::new(0.0, 0.0));
 
-            mesh.draw(ctx, param)?;
+            mesh.draw(&mut canvas, param);
 
         }
 
@@ -175,9 +177,9 @@ impl event::EventHandler<ggez::GameError> for MainState {
 
             let param = DrawParam::new().dest(Point2::new(0.0, 0.0));
 
-            mesh.draw(ctx, param)?;
+            mesh.draw(&mut canvas, param);
         }
 
-        graphics::present(ctx)
+        canvas.finish(ctx)
     }
 }

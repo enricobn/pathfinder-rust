@@ -31,7 +31,7 @@ pub fn main() -> GameResult<()> {
 
 fn run<S>(title: &'static str, state: S) -> Result<(), GameError>
 where
-    S: event::EventHandler<ggez::GameError>,
+    S: event::EventHandler<GameError>,
     S: 'static
 {
     let resource_dir = if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
@@ -42,7 +42,7 @@ where
         path::PathBuf::from("../resources")
     };
 
-    let window_mode = conf::WindowMode::default().fullscreen_type(FullscreenType::True);
+    let window_mode = conf::WindowMode::default().fullscreen_type(FullscreenType::Windowed);
 
     /*let window_mode = conf::WindowMode::default().fullscreen_type(FullscreenType::Windowed)
         .dimensions(300.0, 300.0);
@@ -59,8 +59,8 @@ where
 
     let (ctx, events_loop) = cb.build()?;
 
-    println!("Drawable size {:?}", graphics::drawable_size(&ctx));
-    println!("Screen coordinates {:?}", graphics::screen_coordinates(&ctx));
+    //println!("Drawable size {:?}", graphics::drawable_size(&ctx));
+    //println!("Screen coordinates {:?}", graphics::screen_coordinates(&ctx));
 
     event::run(ctx, events_loop, state)
 }

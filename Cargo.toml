@@ -2,9 +2,10 @@
 name = "pathfinder"
 version = "0.2.0"
 authors = ["Enrico Benedetti <enrico_benedetti@yahoo.com>"]
+resolver = "2" # I think I should migrate to edition 2021
 
 [dependencies]
-ggez = "0.7"
+ggez = "0.9"
 gfx = "0.18"
 nalgebra = { version = "0.29", features = ["mint"] }
 regex = "1.5"

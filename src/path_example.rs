@@ -1,7 +1,7 @@
 use ggez::*;
 use ggez::graphics::{DrawMode, Drawable, Rect, Color, Mesh, DrawParam};
-use base::*;
-use pathfinder::*;
+use crate::base::*;
+use crate::pathfinder::*;
 use std::borrow::BorrowMut;
 use std::time::Instant;
 
@@ -69,8 +69,10 @@ impl event::EventHandler<ggez::GameError> for MainState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        let black = Color::new(0.0, 0.0, 0.0, 1.0);
-        graphics::clear(ctx, black);
+        let mut canvas = graphics::Canvas::from_frame(
+            ctx,
+            Color::new(0.0, 0.0, 0.0, 1.0),
+        );
 
         let shapes = &self.shapes;
 
@@ -89,7 +91,7 @@ impl event::EventHandler<ggez::GameError> for MainState {
 
             let param = DrawParam::new().dest(Point2::new(0.0, 0.0));
 
-            mesh.draw(ctx, param)?;
+            mesh.draw(&mut canvas, param);
         }
 
         for point in self.path.iter() {
@@ -106,9 +108,9 @@ impl event::EventHandler<ggez::GameError> for MainState {
 
             let param = DrawParam::new().dest(Point2::new(self.to_screen(point.x), self.to_screen(point.y)));
 
-            mesh.draw(ctx, param)?;
+            mesh.draw(&mut canvas, param);
         }
 
-        graphics::present(ctx)
+        canvas.finish(ctx)
     }
 }
